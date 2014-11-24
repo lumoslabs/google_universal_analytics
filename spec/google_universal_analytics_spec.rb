@@ -65,7 +65,7 @@ describe GoogleUniversalAnalytics do
   end
 
   describe 'analytics.js function call' do
-    context 'google_universal_analytics_init called with options' do
+    context 'google_universal_analytics_init called with options including domain' do
       let (:options) do
         basic_options.merge({
           custom_vars: custom_vars,
@@ -80,7 +80,31 @@ describe GoogleUniversalAnalytics do
           "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +
           "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n" +
           "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n" +
-          "ga('create', 'UA-TEST', {cookieDomain:'test.net'});\n" +
+          "ga('create', 'UA-TEST', { cookieDomain: 'test.net' });\n" +
+          "ga('set', 'dimension2', 'cheese');\nga('set', 'dimension5', 'cats');\n" +
+          "ga('send', 'event', 'button', 'press', 'cheese', 'on');\nga('send', 'event', 'widget', 'twiddle', 'cats', 'off');\n" +
+          "ga('send', 'pageview');\n" +
+          "</script>\n"
+        )
+      end
+    end
+
+    context 'google_universal_analytics_init called with options without domain' do
+      let (:options) do
+        basic_options.merge({
+          custom_vars: custom_vars,
+          events: events
+        }).tap { |obj| obj.delete(:domain) }
+      end
+
+      it 'should produce the proper script' do
+        expect(dummy_object.google_universal_analytics_init(options)).to eq (
+          "<script>\n" +
+          "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n" +
+          "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +
+          "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n" +
+          "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n" +
+          "ga('create', 'UA-TEST');\n" +
           "ga('set', 'dimension2', 'cheese');\nga('set', 'dimension5', 'cats');\n" +
           "ga('send', 'event', 'button', 'press', 'cheese', 'on');\nga('send', 'event', 'widget', 'twiddle', 'cats', 'off');\n" +
           "ga('send', 'pageview');\n" +

@@ -1,14 +1,22 @@
 require "google_universal_analytics/version"
 
 module GoogleUniversalAnalytics
+
+  class InvalidOptionsError < StandardError
+  end
+
   def google_universal_analytics_init(options = {})
+    unless options[:tracker]
+      raise InvalidOptionsError.new("Missing tracker number")
+    end
+
     "<script>\n" +
     "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n" +
     "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +
     "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n" +
     "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n" +
 
-    "ga('create', '#{options[:tracker]}', {cookieDomain:'#{options[:domain]}'});\n" +
+    "ga('create', '#{options[:tracker]}'#{options[:domain] ? ", { cookieDomain: '#{options[:domain]}' }" : nil});\n" +
 
     "#{custom_vars_jscript(options[:custom_vars])}\n" +
     "#{track_events_jscript(options[:events])}\n" +
