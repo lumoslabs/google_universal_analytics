@@ -26,10 +26,12 @@ module GoogleUniversalAnalytics
   end
 
   def custom_vars_jscript(custom_vars = [])
+    return nil unless custom_vars
     custom_vars.map { |cv| custom_var_jscript(cv) }.join("\n")
   end
 
   def track_events_jscript(events = [])
+    return nil unless events
     events.map { |event| track_event_jscript(event) }.join("\n")
   end
 

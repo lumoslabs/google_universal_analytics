@@ -112,5 +112,20 @@ describe GoogleUniversalAnalytics do
         )
       end
     end
+
+    context 'no events or custom vars' do
+      it 'should return the right script without events or custom vars' do
+        expect(dummy_object.google_universal_analytics_init(basic_options)).to eq (
+          "<script>\n" +
+          "(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n" +
+          "(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n" +
+          "m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n" +
+          "})(window,document,'script','//www.google-analytics.com/analytics.js','ga');\n" +
+          "ga('create', 'UA-TEST', { cookieDomain: 'test.net' });\n\n\n" +
+          "ga('send', 'pageview');\n" +
+          "</script>\n"
+        )
+      end
+    end
   end
 end
